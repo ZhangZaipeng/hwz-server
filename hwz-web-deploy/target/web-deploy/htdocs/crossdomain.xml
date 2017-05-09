@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<cross-domain-policy>
+  <allow-access-from domain="www.yyjzt.com" />
+  <allow-access-from domain="ah.yyjzt.com" />
+  <allow-access-from domain="img.yyjzt.com" />
+</cross-domain-policy>

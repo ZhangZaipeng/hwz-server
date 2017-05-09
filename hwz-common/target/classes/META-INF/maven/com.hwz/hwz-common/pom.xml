@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+	<modelVersion>4.0.0</modelVersion>
+  
+	<parent>
+		<groupId>com.hwz</groupId>
+		<artifactId>hwz-server</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<groupId>com.hwz</groupId>
+	
+	<artifactId>hwz-common</artifactId>
+	
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<packaging>jar</packaging>
+	
+	<name>hwz-common ${project.version}</name>
+	
+	<properties>
+		<spring.version>3.1.2.RELEASE</spring.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.hwz</groupId>
+			<artifactId>hwz-platform</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+
+	</dependencies>
+	
+	
+	
+</project>

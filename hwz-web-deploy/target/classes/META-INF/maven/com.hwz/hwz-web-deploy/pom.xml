@@ -1,0 +1,332 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.hwz</groupId>
+		<artifactId>hwz-server</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	
+	<groupId>com.hwz</groupId>
+	
+	<artifactId>hwz-web-deploy</artifactId>
+	
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<packaging>jar</packaging>
+	
+	<name>hwz-web-deploy</name>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- ${project.build.directory} 构建目录，缺省为target -->
+		<release_directory>${project.build.directory}/</release_directory>
+		<binconf_directory>${project.build.directory}/web-deploy</binconf_directory>
+		<file_encoding>utf-8</file_encoding>
+	</properties>
+
+	<build>
+		<!-- workaround for the empty jar error -->
+		<resources>
+			<resource>
+				<targetPath>${binconf_directory}</targetPath>
+				<filtering>false</filtering>
+				<!-- 内置变量  ${basedir}  项目根目录 -->
+				<directory>${basedir}/framework</directory>
+			</resource>
+			<resource>
+				<targetPath>${binconf_directory}</targetPath>
+				<filtering>true</filtering>
+				<directory>${basedir}/auto_config/framework</directory>
+			</resource>
+		</resources>
+	</build>
+	<!--  -->
+	<profiles>
+		<!-- Release profile will just copy war and package resource files to target/release, 
+			W/O auto-conf. -->
+		<!-- AppOPs will run auto-conf before deploying to production server -->
+		<!-- By default the "dev" profile will be activated -->
+		<!-- Use "mvn install -Denv=release" to activate release profile -->
+		<profile>
+			<id>test</id>
+			<activation>
+				<!--默认激活开发配制 -->
+				<activeByDefault>true</activeByDefault>
+				<!-- env 打包标示 -->
+				<property>
+					<name>env</name>
+					<value>test</value>
+				</property>
+			</activation>
+			
+			<build>
+				<filters>
+					<filter>test.properties</filter>
+				</filters>			
+				<plugins>
+					<!-- Copy war artifact -->
+					<plugin>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.1</version>
+						<executions>
+							<execution>
+								<id>copy-war</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>
+								<configuration>
+									<!-- copy 内容 -->
+									<artifactItems>
+										<artifactItem>
+                                            <groupId>com.hwz</groupId>
+                                            <artifactId>hwz-web</artifactId>
+                                            <version>0.0.1-SNAPSHOT</version>
+											<type>war</type>
+										</artifactItem>
+									</artifactItems>
+									<!-- copy war to 当前项目的target目录下 -->
+									<outputDirectory>${release_directory}</outputDirectory>
+									<overWriteReleases>false</overWriteReleases>
+									<overWriteSnapshots>true</overWriteSnapshots>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>prepare-deploy-package</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<!-- 创建文件夹 -->
+										<mkdir dir="${binconf_directory}/lib" />
+										<copy todir="${binconf_directory}/lib" encoding="${file_encoding}" outputencoding="${file_encoding}">
+											<fileset dir="${project.basedir}/lib" />
+										</copy>
+										<copy todir="${release_directory}" encoding="${file_encoding}" outputencoding="${file_encoding}">
+											<fileset file="${binconf_directory}/install.sh" />
+										</copy>
+										<chmod dir="${binconf_directory}/bin" perm="755" includes="**" />
+										<zip destfile="${release_directory}/web-deploy.zip">
+											<!-- 打包httpd,jetty相关配置 -->
+											<zipfileset dir="${binconf_directory}">
+												<include name="conf/**" />
+												<include name="htdocs/**" />
+											</zipfileset>
+											<!-- 打包脚本目录 -->
+											<zipfileset dir="${binconf_directory}" filemode="755">
+												<include name="bin/**" />
+											</zipfileset>
+											<!-- 打包war包 -->
+											<zipfileset dir="${release_directory}">
+												<include name="*.war" />
+											</zipfileset>
+											<!-- task用到的共用的lib -->
+											<zipfileset dir="${binconf_directory}" filemode="755">
+												<include name="lib/**" />
+											</zipfileset>
+										</zip>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+        <profile>
+            <id>product</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env</name>
+                    <value>product</value>
+                </property>
+            </activation>
+            <build>
+                <filters>
+                    <filter>product.properties</filter>
+                </filters>
+                <plugins>
+                    <!-- Copy war artifact -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-war</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.hwz</groupId>
+                                            <artifactId>hwz-web</artifactId>
+                                            <version>0.0.1-SNAPSHOT</version>
+											<type>war</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${release_directory}</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-deploy-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <mkdir dir="${binconf_directory}/lib" />
+                                        <copy todir="${binconf_directory}/lib" encoding="${file_encoding}" outputencoding="${file_encoding}">
+                                            <fileset dir="${project.basedir}/lib" />
+                                        </copy>
+                                        <copy todir="${release_directory}" encoding="${file_encoding}" outputencoding="${file_encoding}">
+                                            <fileset file="${binconf_directory}/install.sh" />
+                                        </copy>
+                                        <chmod dir="${binconf_directory}/bin" perm="755" includes="**" />
+                                        <zip destfile="${release_directory}/web-deploy.zip">
+                                            <!-- 打包httpd,jetty相关配置 -->
+                                            <zipfileset dir="${binconf_directory}">
+                                                <include name="conf/**" />
+                                                <include name="htdocs/**" />
+                                            </zipfileset>
+                                            <!-- 打包war包 -->
+                                            <zipfileset dir="${binconf_directory}" filemode="755">
+                                                <include name="bin/**" />
+                                            </zipfileset>
+                                            <!-- 打包脚本目录 -->
+                                            <zipfileset dir="${release_directory}">
+                                                <include name="*.war" />
+                                            </zipfileset>
+                                            <!-- task用到的共用的lib -->
+                                            <zipfileset dir="${binconf_directory}" filemode="755">
+                                                <include name="lib/**" />
+                                            </zipfileset>
+                                        </zip>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
+        
+        
+        
+        <profile>
+            <id>app</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <property>
+                    <name>env</name>
+                    <value>app</value>
+                </property>
+            </activation>
+            <build>
+                <filters>
+                    <filter>app.properties</filter>
+                </filters>
+                <plugins>
+                    <!-- Copy war artifact -->
+                    <plugin>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-war</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.hwz</groupId>
+                                            <artifactId>hwz-web</artifactId>
+                                            <version>0.0.1-SNAPSHOT</version>
+											<type>war</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                    <outputDirectory>${release_directory}</outputDirectory>
+                                    <overWriteReleases>false</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-deploy-package</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                    	<mkdir dir="${binconf_directory}/test" />
+                                        <mkdir dir="${binconf_directory}/lib" />
+                                        <copy todir="${binconf_directory}/lib" encoding="${file_encoding}" outputencoding="${file_encoding}">
+                                            <fileset dir="${project.basedir}/lib" />
+                                        </copy>
+                                        <copy todir="${release_directory}" encoding="${file_encoding}" outputencoding="${file_encoding}">
+                                            <fileset file="${binconf_directory}/install.sh" />
+                                        </copy>
+                                        <chmod dir="${binconf_directory}/bin" perm="755" includes="**" />
+                                        <zip destfile="${release_directory}/web-deploy.zip">
+                                            <!-- 打包httpd,jetty相关配置 -->
+                                            <zipfileset dir="${binconf_directory}">
+                                                <include name="conf/**" />
+                                                <include name="htdocs/**" />
+                                            </zipfileset>
+                                            <!-- 打包war包 -->
+                                            <zipfileset dir="${binconf_directory}" filemode="755">
+                                                <include name="bin/**" />
+                                            </zipfileset>
+                                            <!-- 打包脚本目录 -->
+                                            <zipfileset dir="${release_directory}">
+                                                <include name="*.war" />
+                                            </zipfileset>
+                                            <!-- task用到的共用的lib -->
+                                            <zipfileset dir="${binconf_directory}" filemode="755">
+                                                <include name="lib/**" />
+                                            </zipfileset>
+                                        </zip>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+	</profiles>
+	
+
+</project>

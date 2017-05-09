@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<classPathEntry
+		location="d:/mvn_repository/mysql/mysql-connector-java/5.1.1/mysql-connector-java-5.1.1.jar" />
+	<!-- basic
+	<context id="MyBatis3" targetRuntime="MyBatis3">
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
+		<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+			<property name="searchString" value="Example$" />
+			<property name="replaceString" value="Criteria" />
+		</plugin>
+
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://nexus.jmhqmc.com:3306/jm_dev" userId="jm_dev" password="123" />
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<javaModelGenerator targetPackage="com.jm.basic.domain"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="com.jm.basic.dao"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator targetPackage="com.jm.basic.dao"
+			targetProject="jm-web\src\main\java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="true" />
+			<property name="methodNameCalculator" value="extended" />
+		</javaClientGenerator>
+		
+		<table tableName="tb_car" domainObjectName="Car"
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+		<table tableName="tb_area" domainObjectName="Area"
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+	</context>
+	 -->
+	 
+	
+	 <context id="MyBatis3" targetRuntime="MyBatis3">
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
+		<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+			<property name="searchString" value="Example$" />
+			<property name="replaceString" value="Criteria" />
+		</plugin>
+
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://nexus.jmhqmc.com:3306/jm_test" userId="jm_test" password="123" />
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<javaModelGenerator targetPackage="com.jm.basic.domain"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="com.jm.basic.dao"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator targetPackage="com.jm.basic.dao"
+			targetProject="jm-web\src\main\java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="true" />
+			<property name="methodNameCalculator" value="extended" />
+		</javaClientGenerator>
+		
+		<table tableName="tb_gos_order_det" domainObjectName="GosOrderDet"
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+	
+	</context>
+
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 <!-- 
+	 <context id="MyBatis3" targetRuntime="MyBatis3">
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin" />
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" />
+		<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+			<property name="searchString" value="Example$" />
+			<property name="replaceString" value="Criteria" />
+		</plugin>
+
+		<commentGenerator>
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://nexus.jmhqmc.com:3306/jm_test" userId="jm_test" password="123" />
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<javaModelGenerator targetPackage="com.jm.visitingservice.domain"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator targetPackage="com.jm.visitingservice.dao"
+			targetProject="jm-web\src\main\java">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator targetPackage="com.jm.visitingservice.dao"
+			targetProject="jm-web\src\main\java" type="XMLMAPPER">
+			<property name="enableSubPackages" value="true" />
+			<property name="methodNameCalculator" value="extended" />
+		</javaClientGenerator>
+		
+		<table tableName="tb_service_category" domainObjectName="ServiceCategory"
+		    enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">
+		</table>
+	</context>
+	 -->
+</generatorConfiguration>

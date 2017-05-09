@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+       default-autowire="byName" default-lazy-init="false">
+
+    <!-- 定义受环境影响易变的变量 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+        <property name="ignoreResourceNotFound" value="false"/>
+        <property name="locations">
+            <list>
+            	
+            </list>
+        </property>
+    </bean>
+	
+	<bean class="com.hwz.tools.HwzWebIdentityValidator"/> 
+	
+    <context:component-scan base-package="com.hwz.*">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <bean class="com.hwz.pay.util.WxPaymentConfig">
+    	<property name="appid" value="wxae7eeb22af701fd2" />
+    	<property name="mchId" value="1360224802" />
+    	<property name="notifyUrl" value="http://app.hwz.com/api/notify.json" />
+    	<property name="key" value="c1e79afec344eacb7da8f5cbd99b8ec6s" />
+    	<property name="wxIsPayTest" value="false" />
+    	<property name="payTestOil" value="0.01" />
+    	<property name="payTestGos" value="0.02" />
+    </bean>
+    
+    <import resource="classpath:net/bull/javamelody/monitoring-spring.xml" />
+    
+    <bean id= "facadeMonitoringAdvisor" class="net.bull.javamelody.MonitoringSpringAdvisor" >
+         <property name ="pointcut" >
+                 <bean class="org.springframework.aop.support.JdkRegexpMethodPointcut" >
+                         <property name ="pattern" value="com.hwz.*.service.*" />
+                 </bean>
+         </property>
+	</bean>
+	
+</beans>

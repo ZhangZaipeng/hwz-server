@@ -1,0 +1,16 @@
+com\hwz\common\security\KeepLoginStatusVerifier.class
+com\hwz\common\security\impl\PasswordVerifier.class
+com\hwz\common\util\ClassUtils$ClassFilter.class
+com\hwz\common\security\Principal.class
+com\hwz\common\security\AuthenticationException.class
+com\hwz\common\security\AuthenticationProvider.class
+com\hwz\common\security\ValidatorNumberUtils.class
+com\hwz\common\security\impl\CertificateVerifier.class
+com\hwz\common\util\ReflectUtils.class
+com\hwz\common\security\Verifier.class
+com\hwz\common\security\IdentityValidator.class
+com\hwz\common\util\ClassUtils.class
+com\hwz\common\security\impl\VerifyCodeVerifier.class
+com\hwz\common\util\StringUtils.class
+com\hwz\common\security\impl\CookieIdentityValidator.class
+com\hwz\common\security\UUIDGenerator.class
