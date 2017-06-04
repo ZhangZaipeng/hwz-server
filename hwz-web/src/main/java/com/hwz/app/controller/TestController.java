@@ -13,7 +13,7 @@ import com.hwz.platform.springmvc.StringView;
 @RequestMapping("/test")
 public class TestController {
 	
-	// 跳转至登录页面
+	// 跳转至登录页面  git push
     @RequestMapping(value = "/getId.json", method = RequestMethod.GET)
     public ModelAndView toLogin(HttpServletRequest request) {
     	
