@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `tb_user_agent`;
 CREATE TABLE `tb_user_agent` (
-   `user_agent_id` BIGINT(11) NOT NULL AUTO_INCREMENT COMMENT '用户登录编号',
+    `user_agent_id` BIGINT(11) NOT NULL AUTO_INCREMENT COMMENT '用户登录编号',
    `user_id` BIGINT(11) DEFAULT NULL COMMENT '用户编号',
    `login_name` varchar(20) DEFAULT NULL COMMENT '登录名,电话',
    `login_pwd` varchar(100) DEFAULT NULL COMMENT '登录密码',

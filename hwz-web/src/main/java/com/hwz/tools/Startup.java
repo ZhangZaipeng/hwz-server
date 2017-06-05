@@ -9,7 +9,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *  System.in.read(); 等待输入 
  * @author xunianchong
- *
  */
 public class Startup {
 	protected  static final Logger logger = Logger.getLogger(Startup.class);

@@ -76,4 +76,33 @@
     <aop:config>
         <aop:advisor advice-ref="TxAdvice" pointcut="execution(* com.hwz.service.*.*(..)) || execution(* com.hwz.*.service.*.*(..))"/>
     </aop:config> -->
+
+    <!-- start 日志aop 拦截器 -->
+    <!-- service日志记录器 -->
+    <bean id="loggerService" class="com.hwz.tools.LoggerServiceAop" />
+    <!-- dao日志记录器 -->
+    <bean id="loggerDao" class="com.hwz.tools.LoggerDaoAop" />
+    <!-- 时间增强 -->
+    <!--<bean id="methodTimeAop" class="com.hwz.tools.MethodTimeAop" />-->
+    <!--end 日志aop 拦截器 -->
+
+    <aop:config>
+        <!-- service日志通知 -->
+        <aop:aspect id="loggerServiceAspect" ref="loggerService"
+                    order="100">
+            <aop:around method="record"
+                        pointcut="execution(* com.hwz.*.service.impl..*.*(..))" />
+        </aop:aspect>
+        <!-- dao日志通知 -->
+        <!-- <aop:aspect id="loggerDaoAspect" ref="loggerDao" order="101">
+            <aop:around method="record"
+                pointcut="execution(* com.jumper.template.*.dao.impl..*.*(..))" />
+        </aop:aspect> -->
+        <!-- 方法调用时间通知 -->
+        <!-- <aop:aspect id="methodAspect" ref="methodTimeAop" order="102">
+            <aop:around method="around"
+                pointcut="execution(* com.jumper.template.*.*.impl..*.*(..))" />
+        </aop:aspect> -->
+    </aop:config>
+
 </beans>
