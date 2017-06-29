@@ -22,7 +22,11 @@
     ：消息消费者，就是接受消息的程序。
 - 消息通道（channel）
     ：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务。
-    
+``` 
+    http://www.linuxidc.com/Linux/2011-12/49610p2.htm
+    rabbitmq 使用文档
+    https://www.rabbitmq.com/getstarted.html
+```    
 ### 3.RabbitMq安装  
 
 - 安装erlang环境
