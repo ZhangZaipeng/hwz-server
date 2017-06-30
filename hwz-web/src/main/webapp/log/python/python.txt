@@ -1,0 +1,2 @@
+1.XPath在python中的高级应用
+	http://blog.csdn.net/winterto1990/article/details/47903653

@@ -13,7 +13,7 @@
 - 队列（queue）
     ：消息队列载体，每个消息都会被投入到一个或多个队列,可以理解为装消息的容器。
 - 绑定（binding）  
-    ：其实就是一个基于交换机的路由键与队列连接起来的路由规则。
+    ：交换和队列之间的关系称为绑定。
 - 路由键（Routing Key）
     ：每个消息都有一个称为路由键（routing key）的属性
 - 消息生产者（producer）
@@ -22,6 +22,10 @@
     ：消息消费者，就是接受消息的程序。
 - 消息通道（channel）
     ：消息通道，在客户端的每个连接里，可建立多个channel，每个channel代表一个会话任务。
+- 临时队列
+    ：每当我们连接到RabbitMq，我们需要一个新的空的队列。为此，我们可以创建一个具有随机名称的队列，或者甚至更好让服务器为我们选择一个随机队列名称。
+     其次，一旦我们断开消费者，队列应该被自动删除。
+     queueDeclare（）没有提供参数时可以生产一个临时队列 
 ``` 
     http://www.linuxidc.com/Linux/2011-12/49610p2.htm
     rabbitmq 使用文档
@@ -41,10 +45,54 @@
     make && make install
     
     测试安装成功与否 erl     
-     
 ``` 
- 
-    ![an](http://blog.csdn.net/hzhsan/article/details/49427283)
-- 安装abbitmq-server包
+- 安装rabbitmq-server包
 ``` 
+    启动服务
+    rabbitmq-server -detached 守护进程
+    
+    详细说明 --> https://www.rabbitmq.com/configure.html#customise-general-unix-environment
+    $RABBITMQ_HOME/etc/rabbitmq/rabbitmq-env.conf
+    
+    详细说明 --> https://www.rabbitmq.com/configure.html#configuration-file
+    $RABBITMQ_HOME/etc/rabbitmq/rabbitmq.config
 ```
+- 安装rabbitmq 插件
+```
+    rabbitmq-plugins enable rabbitmq_management
+    默认账号和密码都是guest
+```
+
+- 端口
+```
+    4369：epmd，RabbitMQ节点和CLI工具使用的对等发现服务
+    5672,5671：由AMQP 0-9-1和1.0客户端使用，不带TLS和TLS
+    25672：Erlang分发用于节点间和CLI工具通信，并从动态范围分配（默认情况下限制为单个端口，计算为AMQP端口+ 20000）。有关详细信息，请参阅网络指南。
+    15672：HTTP API客户端和rabbitmqadmin（仅当启用管理插件时）
+    61613，61614：没有和使用TLS的STOMP客户端（只有启用了STOMP插件）
+    1883,8883 :( 没有和带有TLS的MQTT客户端，如果启用了MQTT插件
+    15674：STOMP-over-WebSockets客户端（只有启用了Web STOMP插件）
+    15675：MQTT-over-WebSockets客户端（仅当启用了Web MQTT插件时
+```
+注意 erlang的版本与abbitmq-server的版本
+
+### 4.client 方法
+- ConnectionFactory
+    
+- Connection
+
+- Channel
+
+- channel.exchangeDeclare(...)
+
+- channel.queueDeclare(...)
+
+- channel.basicPublish(...)
+    第一个参数是交换的名称
+    第二个是 routing key
+    第三个配置信息
+    第四个是 消息内容
+    
+- channel.queueBind(...)
+    第一个参数是 队列名称
+    第二个是 交换的名称

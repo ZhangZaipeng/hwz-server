@@ -1,0 +1,226 @@
+1、软件下载：
+	wget https://github.com/happyfish100/libfastcommon/archive/V1.0.7.tar.gz
+	wget http://jaist.dl.sourceforge.NET/project/fastdfs/FastDFS%20Nginx%20Module%20Source%20Code/fastdfs-nginx-module_v1.16.tar.gz
+	wget https://github.com/happyfish100/fastdfs/archive/V5.05.tar.gz
+	wget http://nginx.org/download/nginx-1.8.0.tar.gz
+
+1.确定版本
+	fastDFS-5.05.tar.gz
+	libfastcommon-1.0.7
+	fastdfs-nginx-module
+	nginx-1.8.0
+	nginx_cache_purge
+
+2.文件夹目录初始化
+	tracker base_path:/root/fastdfs_tracker
+	storage base_path:/root/fastdfs_storage_info
+	storage store_path0:/root/fastdfs_storage_data
+
+2.安装libfastcommon
+	a)fastdfsz的最新版本是5.05，区别于以往版本，
+	这个版本将公共的一些函数等单独封装成了libfastcommon这个jar包，
+	所以在安装fastdfs之前，我们必须先安装libfastcommon。
+	
+	b)安装 需要gcc gcc-c++ perl 工具包
+		yum -y install gcc gcc-c++ perl
+		在libfastcommon 解压文件夹下直接 
+		./make.sh
+		./make.sh install 
+	
+	c)上安装的路径在/usr/lib64/，但是FastDFS主程序设置的lib目录是/usr/local/lib,软连接过去
+		ln -s /usr/lib64/libfastcommon.so /usr/local/lib/libfastcommon.so
+		ln -s /usr/lib64/libfastcommon.so /usr/lib/libfastcommon.so
+		ln -s /usr/lib64/libfdfsclient.so /usr/local/lib/libfdfsclient.so
+		ln -s /usr/lib64/libfdfsclient.so /usr/lib/libfdfsclient.so
+
+		
+3.安装fastDFS
+	a)tar -zxvf FastDFS_v5.02.tar.gz
+	b)执行命令
+		./make.sh
+		./make.sh install
+	
+	打开/etc/fdfs可以看到fastDFS的相关配置文件(刚开始只有三个)
+		tracker.conf --> 负责均衡调度服务器配置文件
+		client.conf --> 客户端上传配置文件
+		storage.conf --> 文件存储服务器配置文件
+	
+4.配置TrackerServer
+	a) 进入/etc/fdfs，执行命令: cp  tracker.conf.sample  tracker.conf
+	b)创建目录，用于存放log、group等文件
+		mkdir /root/fastdfs_tracker
+	c) 编辑tracker.conf 修改配置文件
+		disabled=false            #启用配置文件
+
+		port=22122                #设置tracker的端口号，一般采用22122这个默认端口
+
+		base_path=/root/fastdfs_tracker   #设置tracker的数据文件和日志目录（预先创建）
+
+		http.server_port=8080     #设置http端口号   注意，这个配置在fastdfs5.05这个版本中已经不用配置，不用管这个！
+
+	d)启动tracker
+	/usr/local/bin/fdfs_trackerd /etc/fdfs/tracker.conf start
+	或者
+	/usr/bin/fdfs_trackerd  /etc/fdfs/tracker.conf start
+	
+	e)启动完毕后，可以查看端口
+	
+	f)如果要设置开机启动则(d中那个能执行放那个)
+		 /usr/bin/fdfs_trackerd  /etc/fdfs/tracker.conf  start 加入到  /etc/rc.d/rc.local文件中
+		 
+5.配置StorageServer
+	a) 进入/etc/fdfs，执行命令: cp  storage.conf.sample  storage.conf
+	b)创建目录，用于存放log、group等文件
+		mkdir /root/fastdfs_storage_info
+		mkdir /root/fastdfs_storage_data
+	c) 编辑storage.conf 修改配置文件
+		disabled=false            #启用配置文件
+		
+		group_name=group1    #组名，根据实际情况修改
+		
+		port=23000     #设置storage的端口号，默认是23000，同一个组的storage端口号必须一致
+		
+		base_path=/root/fastdfs_storage_info    #设置storage的日志目录（需预先创建）
+		
+		store_path_count=1   #存储路径个数，需要和store_path个数匹配
+		
+		store_path0=/root/fastdfs_storage_data   #存储路径,可以指定多个
+		
+		tracker_server=ip:22122   #tracker服务器的IP地址和端口号,可以指定多个(ip填写外网IP)
+		
+		http.server_port=8080     #设置http端口号   注意，这个配置在fastdfs5.05这个版本中已经不用配置，不用管这个！
+	d)启动tracker
+	/usr/local/bin/fdfs_storaged /etc/fdfs/storage.conf start
+		或者
+	/usr/bin/fdfs_storaged  /etc/fdfs/storage.conf start
+	
+	e)启动完毕后，可以查看端口
+	
+	f)如果要设置开机启动则(d中那个能执行放那个)
+		 /usr/bin/fdfs_storaged  /etc/fdfs/storage.conf start 加入到  /etc/rc.d/rc.local文件中
+
+	如果此时你用java等api编辑客户端，实际上就可以完成文件的上传、同步和下载。	
+================================================================================================================
+	
+为什么安装nginx	
+	为什么网上还会有很多人说需要nginx呢？？？其实主要原因时因为，我们可以通过配置nginx为下载提供基于http协议的下载等功能。
+		其实，storage中安装nginx，主要是为了为提供http的访问服务，同时解决group中storage服务器的同步延迟问题。
+	而tracker中安装nginx，主要是为了提供http访问的反向代理、负载均衡以及缓存服务 
+	
+6.每一台StorageServer上安装FastDFS的nginx模块（提供http访问）
+	1) 安装一些工具或者以来软件，ngnix用户组
+		yum -y install pcre-devel zlib-devel
+		
+	2)解压FastDFS-nginx-module
+		修改fastdfs-nginx-module的config文件
+			（看报错情况）
+			CORE_INCS="$CORE_INCS /usr/local/include/fastdfs /usr/local/include/fastcommon/"
+			修改为CORE_INCS="$CORE_INCS /usr/include/fastdfs /usr/include/fastcommon"
+		注意：各个版本的位置并不统一，所以需要根据自己的版本修改位置
+	
+	3)解压 nginx
+		./configure --prefix=/usr/local/nginx --add-module=/opt/fastdfs-nginx-module/src
+		注意  各个版本的位置并不统一，所以需要根据自己的版本修改位置
+		
+		执行 make 和 make install 这两个命令，没有报错误就是安装成功了
+		
+		执行命令 cd /usr/local/nginx/conf，编辑 nginx.conf 这个文件
+		
+		修改 user  root;
+		在server段中添加：
+			location ~/group[1-3]/M00{
+				root /root/fastdfs/storage-data;   // 根据自己的环境设置目录
+				ngx_fastdfs_module;
+			}
+		
+		将fastdfs-5.05/conf目录下面的http.conf和mime.types拷贝到/etc/fdfs/下，如果不执行这一步，后边在启动nginx时会报错。		
+	
+		将fastdfs-nginx-module/src目录下面的mod_fastdfs.conf这个文件拷贝到 /etc/fdfs 目录下。	
+
+		修改mod_fastdfs.conf
+			base_path=/root/fastdfs_storage_info   #保存日志目录
+			
+			tracker_server=192.168.224.20:22122   #tracker服务器的IP地址以及端口号
+			
+			storage_server_port=23000   #storage服务器的端口号
+			
+			group_name=group1  #当前服务器的group名
+			
+			url_have_group_name= true        #文件url中是否有group名
+			
+			store_path_count=1          #存储路径个数，需要和store_path个数匹配
+			
+			store_path0=/root/fastdfs_storage_data         #存储路径
+			
+			=============================
+			如果不是集群  group_count = 0  ，否则根据集群个数来
+			[group1]
+			group_name=group1
+			storage_server_port=23000
+			store_path_count=2
+			store_path0=/home/yuqing/fastdfs
+			store_path1=/home/yuqing/fastdfs1
+			。。。
+			
+		4)建立软连接 ln  -s  /root/fastdfs_storage_data/data  /root/fastdfs_storage_data/data/M00
+
+		5)执行命令启动nginx: /usr/local/nginx/sbin/nginx ，
+			如果/usr/local/nginx/logs/error.log中没有报错，同时访问192.168.224.29:8080这个url能看到nginx的欢迎页面。
+			报错了看nginx 日志，
+			然后看https://my.oschina.net/u/2450896/blog/672518
+
+7.配置客户端上传文件 (192.168.41.160)
+	a)打开 /etc/fdfs 文件夹，编辑 client.conf 文件，编辑内容如下:
+		base_path=/root/fastdfs_client        #存放路径
+        tracker_server=192.168.224.20:22122          #tracker服务器IP地址和端口号
+
+	b)模拟上传文件，执行如下命令: /usr/bin/fdfs_upload_file  /etc/fdfs/client.conf  /opt/1.txt
+	
+	 /usr/bin/fdfs_upload_file  /etc/fdfs/client.conf 	test.txt
+	
+	
+
+
+
+
+
+
+http://www.linuxidc.com/Linux/2014-06/103382.htm
+http://blog.csdn.net/XingJames/article/details/52759876
+
+非常好
+http://www.tuicool.com/articles/Rvyeqqr
+http://www.cnblogs.com/PurpleDream/p/4510279.html
+
+
+FastDFS-nginx-module功能解释
+http://www.cnblogs.com/littleatp/p/4361318.html
+
+断点续传原理
+http://www.jb51.net/article/88707.htm
+
+文件切片代码
+http://blog.csdn.net/kingviewer/article/details/53009056
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

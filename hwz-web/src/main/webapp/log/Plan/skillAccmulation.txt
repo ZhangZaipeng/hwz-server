@@ -1,0 +1,59 @@
+每天一小计
+1.maven跳过测试单元
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-surefire-plugin</artifactId>
+		<configuration>
+			<skip>true</skip>
+		</configuration>
+	</plugin>
+
+2.group by  having 的用法
+
+3.dubbo启动方式
+	两种 1. main 方法
+	     2.Spring容器启动  在spring配置文件中 加入dubbo的配置文件 <import resource="dubbo-provider.xml" />
+
+4.事务资料
+	事务的隔离级别与数据库的锁关系
+	http://www.jb51.net/article/75452.htm
+	实验
+	http://xm-king.iteye.com/blog/770721
+
+5.spring  
+	1.spring 与 java web项目融合
+		web.xml中配置监听器  --><listener> org.springframework.web.context.ContextLoaderListener
+	2.IOC 注意事项  ---- set/get方式注入属性  -----构造方法注入属性   
+		属性的seter/geter方法，无参构造方法  
+	3.AOP  事务切面
+
+6.quarta定时任务实现
+	1.调度工厂类名：SchedulerFactoryBean -->属性 triggers  配置调度触发器
+	2.调度触发器类名：CronTriggerFactoryBean --> 属性cronExpression（触发规则），jobDetail（）
+	3.使用MethodInvokingJobDetailFactoryBean --> targetObject（目标Bean ID） targetMethod(定义发方法名称)
+	4.目标bean：自定义要触发的方法。
+	
+7.Maven clean 生命周期
+	1)pre-clean 执行一些清理前需要完成的工作
+	2)clean 清理上一次构建生成的文件
+	3)post-clean 执行一些清理后需要完成的工作
+	
+8.Maven default 生命周期
+	
+	1)process-resources			maven-resoures-plugin：resources			复制主资源文件至主输出目录
+	2)compile					maven-compile-plugin:compile			编译主代码至主输出目录
+	3)process-test-resources	maven-resources-plugin:testResources	复制测试资源文件至测试输出目录
+	4)test-compile				maven-compile-plugin:testCompile		编译测试代码至测试输出目录
+	5)test						maven-surefire-plugin:test				执行测试用例
+	6)package					maven-jar-plugin:jar					创建项目jar包
+	7)install					maven-install-plugin:install			将项目输出构建安装到本地仓库
+	8)deploy					maven-deploy-plugin:deploy				将项目输出构建部署到远程仓库
+	
+9.Maven内置变量说明：
+	${basedir} 项目根目录
+	${project.build.directory} 构建目录，缺省为target
+	${project.build.outputDirectory} 构建过程输出目录，缺省为target/classes
+	${project.build.finalName} 产出物名称，缺省为${project.artifactId}-${project.version}
+	${project.packaging} 打包类型，缺省为jar
+	${project.xxx} 当前pom文件的任意节点的内容
+	

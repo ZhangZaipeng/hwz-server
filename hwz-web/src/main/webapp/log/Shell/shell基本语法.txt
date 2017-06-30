@@ -1,0 +1,123 @@
+1.什么是Shell
+	Shell其实就是一个解释执行命令的程序，所谓shell编程其实就是用一定的语法将各种基本的命令组合起来,让shell程序去解释执行。
+	
+2.Shell基本知识
+	1)变量
+		双引号及单引号 --> 单引表示产量 ，双引为变量
+		HOME="/home"		注意赋值不要有空格
+		
+		echo '$HOME'		显示单引号里的内容
+		--> $HOME
+		echo "$HOME"		显示变量值
+		--> /home
+	2)系统变量
+		$0 这个程序的执行名字
+　　		$n 　这个程序的第n个参数值，n=1...9
+　　		$*　 这个程序的所有参数
+　　		$# 这个程序的参数个数
+　　		$$ 这个程序的PID
+　　		$! 执行上一个背景指令的PID
+		$? 上一个指令的返回值
+	3)数字运算	语法：expr integer operator integer 其中operator为+ - * / %, 但对*的使用要用转义符/
+	4)逻辑运算	
+		算术
+		int1 -eq int2 相等?
+		int1 -ne int2 不等?
+		int1 -gt int2 int1 > int2 ?
+		int1 -ge int2 int1 >= int2 ?
+		int1 -lt int2 int1 < int2 ?
+		int1 -le int2 int1 <= int2
+		
+		字符串比较
+		-z string 长度为零，则为true					[ -z "$myvar" ]
+		-n string 长度非零，则为true					[ -n "$myvar" ]
+		[ string -eq string ] 相同则为true			[ "$myvar" -eq "$myvar" ]
+		 
+		文件比较
+		-e filename			如果 filename文件 存在，则为真            [ -e /var/log/sys.log ]
+		-d dirname			如果 dirname目录 存在，则为真       [ -d /tmp/mydir ]
+		-r filename			如果 filename文件 可读，则为真              [ -r /var/log/sys.log ]
+　　		-w filename			如果 filename文件 可写，则为真            [ -w /var/mytmp.txt ]
+　　		-x filename         如果 filename文件 可执行，则为真           [ -L /usr/bin/grep.sh ]
+　　		filename1 -nt filename2 如果 filename1 比 filename2 新，则为真 [ /tmp/install/etc/services -nt /etc/services ]
+　　		filename1 -ot filename2 如果 filename1 比 filename2 旧，则为真 [ /boot/bzImage -ot arch/i386/boot/bzImage ]
+		
+	5)分支结构
+		
+		if [ var1 -? var2 ]; then
+		echo "hello";
+		fi
+		
+		if [ var1 -? var2 ]; then
+	    echo "hello";
+	    else
+	    echo "hello";
+	    fi
+	    
+	    if [ var1 -? var2 ]; then
+	    echo "hello";
+	    elif [ var3 -? var4 ]; then
+	    echo "hello";
+	    fi 
+	    
+		-----------------------------
+		
+		case value in
+			condition1)
+				echo "a"
+			;;
+			condition1)
+				echo "a"
+			;;
+			...
+			*)													//*通配符
+				echo ".........."
+			;;
+		esac
+		
+		----------------------------
+		
+		for var in 1 2 3 			循环 （1,2,3） 放到变量var中
+		do
+    		echo "?????? $var"
+		done
+		
+	6) 正则
+		^  		在字符串的开始处进行匹配
+		$  		在字符串的末尾处进行匹配
+		.  		匹配任意单个字符，包括换行符
+		[…]  	匹配出括号内的任意字符
+		[^…]  	匹配不出括号内的任意字符
+		a* 		匹配零个或多个 a（包括空串）
+		a+  	匹配 1 个或多个 a（不包括空串）
+		a？  		匹配 1 个或零个 a
+		a1|a2  	匹配 a1 或 a2
+		a(m)  	匹配 m 个 a
+		a(m,)  	匹配 m 个或更多个 a
+		a(m,n)  匹配 m 到 n 个 a
+		a(,n)  	匹配 0 到 n 个 a
+		
+	7) 小知识
+		set -x	执行指令后，显示每一条指令，调试shell脚本
+		set -e  若指令传回值不等于0，则立即退出shell，这句语句告诉bash如果任何语句的执行结果不是true则应该退出
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+shell学习博客
+http://blog.sina.com.cn/s/blog_5b1acf750101g9gn.html

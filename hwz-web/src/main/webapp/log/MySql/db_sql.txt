@@ -1,0 +1,108 @@
+1.sql语句
+	1)select语句语法结构
+	SELECT [ALL | DISTINCT]
+		{ * | table.* | [ table.field1 [ as alias1] [,table.field2 [as alias2]][,…]] }
+	FROM table_name [ as table_ alias ]
+	[left|out|inner join table_name2 ]	[ON ....]			# 联合查询
+	[ WHERE … [ 子查询 ] ] 							# 指定结果需满足的条件  ，where 中可能嵌套子查询
+	[ GROUP BY …] 							# 指定结果按照哪几个字段来分组
+	[HAVING …] 								# 过滤分组的记录必须满足的次要条件
+	[ ORDER BY table.field1 DESC，table.field2 DESC  … ] 		# 指定查询记录按一个或者多个条件排序
+	[ LIMIT { [ offset,] row_count | row_count OFFSET offset }] ;	# 指定查询的记录从哪条至哪条
+									
+	
+	2)sql语句执行顺序
+		(8)SELECT 
+			(9)DISTINCT  (11)<Top Num> <select list>
+		(1)FROM [left_table]
+		(3)<join_type> JOIN <right_table>
+		(2)ON <join_condition>
+		(4)WHERE <where_condition>
+		(5)GROUP BY <group_by_list>
+		(6)WITH <CUBE | RollUP>
+		(7)HAVING <having_condition>
+		(10)ORDER BY <order_by_list>
+	
+	3)sql小知识积累
+		DISTINCT 关键字 -->  去掉SELECT查询返回的记录结果中重复的记录,只返回一条
+		
+		left|inner join -->  当两个查询结果中某一个字段有关联时，可以把两个表中的查询结果连接起来，三表以此类推
+		
+		子查询 --> 在查询语句中的WHERE条件子句中，又嵌套了另外一个查询语句，
+				作用：执行子查询，其结果不被显示，而是传递给外部查询，作为外部查询的条件使用
+		
+		COUNT([*,column]) -> 如果是 * 返回检索行的数目，不论其是否包含NULL值 ；如果是column为null，返回SELECT语句检索到的行中非NULL值的数目
+		
+		某字段等 NULL 的正确判断  不能用 =、>、< … 所有的判断 只能用 is null进行判断
+		
+		删除a表中重复数据		保留ID最大的数据
+		DELETE 
+			a 
+		FROM im_accounts a 
+		JOIN ( 
+			SELECT chatId , MAX(id) AS id FROM im_accounts GROUP BY chatId HAVING COUNT(*) > 1
+		) b ON a.chatId = b.chatId 
+		WHERE b.id > a.id
+		
+		RAND()函数与 ORDER BY 字句的配合使用能够实现随机抽取样本的功能，
+		这个技巧在进行数据统计的时候很方便。
+		SELECT * FROM tableName ORDER BY RAND();
+		
+		
+	4)sql优化
+		a)join优化子查询
+			表结构
+			tb_a : u_id , 列1 , 列2
+			tb_b : id , u_id , 列3 
+			============ 未优化 ============
+			SELECT 
+				A.u_id , A.列1 , A.列2 , (SELECT B.列3 FROM tb_b B WHERE A.u_id = B.u_id) AS 列3 
+			FROM tb_a A ;  
+			
+			=========== 优化后 ============
+			SELECT 
+				A.u_id , A.列1 , A.列2 , B.列3  
+			FROM tb_a A 
+			LEFT JOIN tb_b B ON A.u_id=B.u_id;
+			
+		b)join优化聚合子查询
+			============ 未优化 ============
+			SELECT 
+				t.*
+			FROM tb_score t
+			WHERE t.score = ( 
+				SELECT 
+					MAX(t1.score) 
+				FROM tb_score t1 
+				WHERE t.name = t1.name AND t.class = t1.class
+			);
+				
+			=========== 优化后 ============
+			SELECT 
+				* ,MAX(t.score)
+			FROM tb_score t 
+			GROUP BY t.name,t.class HAVING t.score = MAX(t.score); 
+
+
+	
+	5) explain
+		select_type：表示 SELECT 的类型，常见的取值有
+			SIMPLE（简单表，即不使用表连接或者子查询）、
+			PRIMARY（主查询，即外层的查询）、UNION（UNION 中的第二个或者后面的查询语句）、
+			SUBQUERY（子查询中的第一个 SELECT）等。
+  	table：输出结果集的表。
+  	type：表示表的连接类型，性能由好到差的连接类型为 system（表中仅有一行，即常量表）、
+			const（单表中最多有一个匹配行，例如 primary key 或者 unique index）、
+			eq_ref（对于前面的每一行，在此表中只查询一条记录，简单来说，就是多表连接中使用primary key或者unique index）、
+			ref （与eq_ref类似，区别在于不是使用primary key 或者 unique index，而是使用普通的索引）、
+			ref_or_null（与 ref 类似，区别在于条件中包含对 NULL 的查询）、
+			index_merge(索引合并优化)、unique_subquery（in的后面是一个查询主键字段的子查询）、
+			index_subquery （与 unique_subquery 类似，区别在于 in 的后面是查询非唯一索引字段的子查询）、
+			range（单表中的范围查询）、
+			index（对于前面的每一行，都通过查询索引来得到数据）、
+			all （对于前面的每一行，都通过全表扫描来得到数据）
+
+	update语句
+	
+	sql优化
+	http://www.cnblogs.com/yunfeifei/p/3850440.html

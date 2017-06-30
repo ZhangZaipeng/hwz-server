@@ -1,0 +1,56 @@
+----------------- 数据库 优化 ----------------
+
+1.sql级索引优化
+	a)join优化子查询（注意一对多关系，用连接查询就会出现多条记录）
+	表结构
+	tb_a : u_id , 列1 , 列2
+	tb_b : id , u_id , 列3 (有多个u_id列)
+	============ 未优化 ============
+	SELECT 
+		A.u_id , A.列1 , A.列2  
+	FROM tb_a A 
+	WHERE A.u_id IN ( SELECT u_id FROM tb_b )  
+	
+	=========== 优化后 ============
+	SELECT 
+		A.u_id , A.列1 , A.列2 , B.列3  
+	FROM tb_a A 
+	LEFT JOIN tb_b B ON A.u_id=B.u_id;
+	
+	b)join优化聚合子查询
+	============ 未优化 ============
+	SELECT 
+		t.*
+	FROM tb_score t
+	WHERE t.score = ( 
+		SELECT 
+			MAX(t1.score) 
+		FROM tb_score t1 
+		WHERE t.name = t1.name AND t.class = t1.class
+	);
+		
+	=========== 优化后 ============
+	SELECT 
+		* ,MAX(t.score)
+	FROM tb_score t 
+	GROUP BY t.name,t.class HAVING t.score = MAX(t.score); 
+
+	SELECT 
+		*,MAX(t1.score)
+	FROM tb_score t 
+	LEFT JOIN tb_score t1 ON t.name = t1.name AND t.class = t1.class
+	GROUP BY t.name,t.class HAVING t.score = MAX(t1.score);
+	
+	c) 实现分组选择
+	查询每个班，每个同学，前两名成绩数据
+	SELECT * FROM tb_score WHERE `name`='张画' ORDER BY score DESC LIMIT 2
+	然后多次根据多个名字，多次查询
+
+	问题 1.如果用户过多，分类过多的情况下，需要多次执行同一查询
+	问题 2.增加应用程序同数据库交互次数	
+	问题 3.增加了数据库执行查询的次数，不符合批处理原则
+	问题 4.增加网络流量
+	
+
+2.数据库结构优化
+3.系统配置优化
