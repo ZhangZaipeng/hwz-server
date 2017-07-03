@@ -77,6 +77,7 @@
 注意 erlang的版本与abbitmq-server的版本
 
 ### 4.client 方法
+Java Api : https://www.rabbitmq.com/api-guide.html
 - ConnectionFactory
     
 - Connection
