@@ -26,11 +26,7 @@
     ：每当我们连接到RabbitMq，我们需要一个新的空的队列。为此，我们可以创建一个具有随机名称的队列，或者甚至更好让服务器为我们选择一个随机队列名称。
      其次，一旦我们断开消费者，队列应该被自动删除。
      queueDeclare（）没有提供参数时可以生产一个临时队列 
-``` 
-    http://www.linuxidc.com/Linux/2011-12/49610p2.htm
-    rabbitmq 使用文档
-    https://www.rabbitmq.com/getstarted.html
-```    
+  
 ### 3.RabbitMq安装  
 
 - 安装erlang环境
@@ -97,3 +93,10 @@ Java Api : https://www.rabbitmq.com/api-guide.html
 - channel.queueBind(...)
     第一个参数是 队列名称
     第二个是 交换的名称
+
+### 资料文档
+``` 
+    http://www.linuxidc.com/Linux/2011-12/49610p2.htm
+    rabbitmq 使用文档
+    https://www.rabbitmq.com/getstarted.html
+```
