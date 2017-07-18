@@ -116,6 +116,10 @@ public class QueryBuilder {
         Gson gson = new Gson();
         System.out.println(gson.toJson(map));
         System.out.println(gson.toJson(qb.build()));
+        System.out.println(gson.toJson(qb2.build()));
+
+
+
 //        System.out.println(
 //                new StringBuilder()
 //                        .append("curl -XGET 'http://10.0.14.225:9200/sdt-test/item/_search?pretty' -d'").append(SystemUtils.LINE_SEPARATOR)

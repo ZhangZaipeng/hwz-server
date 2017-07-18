@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * 客户端搜索 ES 的类
  * Created by luoyifan on 2016/3/31.
+ * https://www.elastic.co/guide/cn/elasticsearch/guide/current/foreword_id.html
  */
 public class SearchAction {
     private final Logger log;
