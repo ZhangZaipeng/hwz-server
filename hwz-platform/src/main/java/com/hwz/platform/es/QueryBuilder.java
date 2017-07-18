@@ -2,6 +2,7 @@ package com.hwz.platform.es;
 
 import java.util.*;
 
+import com.google.gson.Gson;
 import com.hwz.platform.YvanUtil;
 import com.hwz.platform.platform.JsonWapper;
 
@@ -108,8 +109,13 @@ public class QueryBuilder {
         QueryBuilder qb = new QueryBuilder();
         qb.filter.bool(qb2.build());
 
-        System.out.println(YvanUtil.toJsonPretty(qb.build()));
-
+        // System.out.println(YvanUtil.toJsonPretty(qb.build()));
+        Map<String,Object> map = new HashMap<String, Object>();
+        map.put("test",1);
+        System.out.println("1");
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(map));
+        System.out.println(gson.toJson(qb.build()));
 //        System.out.println(
 //                new StringBuilder()
 //                        .append("curl -XGET 'http://10.0.14.225:9200/sdt-test/item/_search?pretty' -d'").append(SystemUtils.LINE_SEPARATOR)
