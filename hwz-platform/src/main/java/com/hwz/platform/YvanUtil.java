@@ -1,35 +1,30 @@
 package com.hwz.platform;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hwz.platform.platform.JsonWapper;
+import com.hwz.platform.springmvc.WebContext;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.hwz.platform.springmvc.WebContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class YvanUtil {
 
-    private static Gson                 gson;
+    private static ObjectMapper                 objectMapper;
     private static final sun.misc.BASE64Encoder base64Encoder           = new sun.misc.BASE64Encoder();
     private static final sun.misc.BASE64Decoder base64Decoder           = new sun.misc.BASE64Decoder();
 
@@ -38,7 +33,51 @@ public class YvanUtil {
     public static final String                  COOKIE_PATH             = "/";
 
     static {
-    	gson = new Gson();
+        objectMapper = new ObjectMapper();
+        objectMapper.writerWithDefaultPrettyPrinter();
+    }
+
+    public static JsonWapper merge(String mainNode, String updateNode) {
+        try {
+            return new JsonWapper(objectMapper.writeValueAsString(merge(objectMapper.readTree(mainNode), objectMapper.readTree(updateNode))));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
+
+        Iterator<String> fieldNames = updateNode.fieldNames();
+        while (fieldNames.hasNext()) {
+
+            String fieldName = fieldNames.next();
+            JsonNode mainJsonNode = mainNode.get(fieldName);
+            JsonNode updateJsonNode = updateNode.get(fieldName);
+
+            // if field exists and is an embedded object
+            if (mainJsonNode != null && mainJsonNode.isObject()) {
+                merge(mainJsonNode, updateNode.get(fieldName));
+            } else {
+                if (mainJsonNode != null && mainJsonNode.isArray()) {
+                    if (updateJsonNode != null) {
+                        ArrayNode arrayNode = (ArrayNode) mainJsonNode;
+                        if (updateJsonNode.isArray()) {
+                            //合并2个数组
+                            arrayNode.addAll((ArrayNode) updateJsonNode);
+                        } else {
+                            arrayNode.add(updateJsonNode);
+                        }
+                    }
+                } else if (mainNode instanceof ObjectNode) {
+                    // Overwrite field
+                    JsonNode value = updateNode.get(fieldName);
+                    ((ObjectNode) mainNode).set(fieldName, value);
+                }
+            }
+
+        }
+
+        return mainNode;
     }
 
     public static String GetRequestBody(HttpServletRequest request, String encoding) {
@@ -54,12 +93,7 @@ public class YvanUtil {
             IOUtils.closeQuietly(is);
         }
     }
-    
-    /**
-     * 获取请求Boy中的内容
-     * @param request
-     * @return
-     */
+
     public static String GetRequestBody(HttpServletRequest request) {
         int size = request.getContentLength();
         InputStream is = null;
@@ -73,66 +107,7 @@ public class YvanUtil {
             IOUtils.closeQuietly(is);
         }
     }
-    
-    
 
-    /**
-     * 将Json字符串序列化成指定对象
-     */
-    public static <T> T jsonToObj(String jsonStr, Class<T> clazz) {
-        try {
-            return gson.fromJson(jsonStr, clazz);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * 将Json字符串序列化成 list
-     */
-    public static List<?> jsonToList(String jsonInput) {
-        try {
-            return gson.fromJson(jsonInput, List.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * 将Json字符串序列化成json
-     */
-    public static Map<String, Object> jsonToMap(String jsonInput) {
-        try {
-            return gson.fromJson(jsonInput, Map.class);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    /**
-     * 将对象序列化成json
-     */
-    public static String toJson(Object obj) {
-        try {
-            return gson.toJson(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    /**
-     * 将对象序列化成json
-     */
-    public static String toJsonPretty(Object obj) {
-        try {
-            return gson.toJson(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    
     public static final byte[] readBytes(InputStream is, int contentLen) throws IOException {
         if (contentLen > 0) {
             int readLen = 0;
@@ -151,32 +126,70 @@ public class YvanUtil {
         return new byte[] {};
     }
 
-    /**
-     * 保存内容到文件
-     *
-     * @param filePath 文件路径
-     * @param content 保存的内容
-     */
-    public static void saveToFile(String filePath, String content) {
-        BufferedWriter bufferedWriter = null;
-        OutputStreamWriter outputStreamWriter = null;
-        FileOutputStream fileOutputStream = null;
+    public static <T> T mapToEntities(Object listMap, Class<T> clazz) {
         try {
-            File file = new File(filePath);
-            fileOutputStream = new FileOutputStream(file);
-            outputStreamWriter = new OutputStreamWriter(fileOutputStream, "UTF-8");
-            bufferedWriter = new BufferedWriter(outputStreamWriter);
-            bufferedWriter.write(content);
-            bufferedWriter.flush();
+            String jsonString = objectMapper.writeValueAsString(listMap);
+            return objectMapper.readValue(jsonString, clazz);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(bufferedWriter);
-            IOUtils.closeQuietly(outputStreamWriter);
-            IOUtils.closeQuietly(fileOutputStream);
         }
     }
-    
+
+    /**
+     * 将Json字符串序列化成指定对象
+     */
+    public static <T> T jsonToObj(String jsonStr, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(jsonStr, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将Json字符串序列化成 list
+     */
+    public static List<?> jsonToList(String jsonInput) {
+        try {
+            return objectMapper.readValue(jsonInput, List.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将Json字符串序列化成json
+     */
+    public static Map<?, ?> jsonToMap(String jsonInput) {
+        try {
+            return objectMapper.readValue(jsonInput, Map.class);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将对象序列化成json
+     */
+    public static String toJson(Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 将对象序列化成json
+     */
+    public static String toJsonPretty(Object obj) {
+        try {
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * 从文件中读取所有内容
      */
@@ -190,6 +203,12 @@ public class YvanUtil {
         }
     }
 
+    public static <T> T createInstance(Class<T> clazz, String classFullName,
+                                       Object... args) throws ClassNotFoundException, IllegalAccessException,
+            InvocationTargetException, InstantiationException {
+        Constructor constructor = Class.forName(classFullName).getConstructors()[0];
+        return (T) constructor.newInstance(args);
+    }
 
     public static String encodeBase64(String s) {
         return base64Encoder.encode(s.getBytes());
@@ -286,5 +305,22 @@ public class YvanUtil {
         }
     }
 
-
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> bean2Map(Object javaBean) {
+        Map<K, V> ret = new HashMap<K, V>();
+        try {
+            Method[] methods = javaBean.getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().startsWith("get")) {
+                    String field = method.getName();
+                    field = field.substring(field.indexOf("get") + 3);
+                    field = field.toLowerCase().charAt(0) + field.substring(1);
+                    Object value = method.invoke(javaBean, (Object[]) null);
+                    ret.put((K) field, (V) (null == value ? "" : value));
+                }
+            }
+        } catch (Exception e) {
+        }
+        return ret;
+    }
 }
