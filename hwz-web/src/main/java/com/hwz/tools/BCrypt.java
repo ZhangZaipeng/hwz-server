@@ -730,4 +730,14 @@ public class BCrypt {
             ret |= hashed_bytes[i] ^ try_bytes[i];
         return ret == 0;
     }
+
+    public static void main(String[] args) {
+        String cryptString1 = BCrypt.hashpw("123456", BCrypt.gensalt());
+        String cryptString2 = BCrypt.hashpw("123456", BCrypt.gensalt());
+        String cryptString3 = BCrypt.hashpw("123456", BCrypt.gensalt());
+
+        System.out.println(cryptString1);
+        System.out.println(cryptString2);
+        System.out.println(cryptString3);
+    }
 }
