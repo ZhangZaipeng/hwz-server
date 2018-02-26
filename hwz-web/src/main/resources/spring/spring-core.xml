@@ -22,15 +22,6 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
-    <bean class="com.hwz.pay.util.WxPaymentConfig">
-    	<property name="appid" value="${appid}" />
-    	<property name="mchId" value="${mch_id}" />
-    	<property name="notifyUrl" value="${notify_url}" />
-    	<property name="key" value="${pay_key}" />
-    	<property name="wxIsPayTest" value="${wx_is_pay_test}" />
-    	<property name="payTestOil" value="${pay_test_oil}" />
-    	<property name="payTestGos" value="${pay_test_gos}" />
-    </bean>
     
     <import resource="classpath:net/bull/javamelody/monitoring-spring.xml" />
     
