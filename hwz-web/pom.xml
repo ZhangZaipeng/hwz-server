@@ -157,12 +157,6 @@
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 		</dependency>
-		<!-- alipay -->
-		<dependency>
-		  <groupId>com</groupId>
-		  <artifactId>alipay</artifactId>
-		  <version>1.0</version>
-		</dependency>
 	</dependencies>
 
 	<!-- 通过mvn命令加参数  根据不同的环境   激活不同的配置文件  
