@@ -113,8 +113,8 @@ get_pid() {
 }
 
 check_monitor_ok() {
-  #CHECK_STARTUP_URL="http://127.0.0.1:${APP_PORT}/ok.html"
-  CHECK_STARTUP_URL="http://127.0.0.1:${APP_PORT}/user/ok.html"
+  CHECK_STARTUP_URL="http://127.0.0.1:${APP_PORT}/ok.html"
+  # CHECK_STARTUP_URL="http://127.0.0.1:${APP_PORT}/${APP_NAME}/ok.html"
 	STARTUP_SUCCESS_MSG="ok"
 	
 	if  $production_mode ; then 

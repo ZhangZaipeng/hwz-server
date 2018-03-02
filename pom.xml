@@ -29,7 +29,7 @@
         <java_source_version>1.7</java_source_version>
         <java_target_version>1.7</java_target_version>
         <file_encoding>UTF-8</file_encoding>
-        <spring.version>3.1.2.RELEASE</spring.version>
+        <spring.version>4.1.2.RELEASE</spring.version>
     </properties>
     
     <!-- maven plug manager -->
@@ -304,6 +304,7 @@
 				<artifactId>freemarker</artifactId>
 				<version>2.3.19</version>
 			</dependency>
+
 			<!-- mongodb -->
 			<dependency>
 				<groupId>org.mongodb</groupId>
@@ -315,6 +316,34 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-mongodb</artifactId>
 				<version>1.10.9.RELEASE</version>
+			</dependency>
+
+			<!-- dubbo -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>2.5.3</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<artifactId>spring</artifactId>
+						<groupId>org.springframework</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- netty -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>3.9.9.Final</version>
+			</dependency>
+
+			<!-- zk -->
+			<dependency>
+				<groupId>com.101tec</groupId>
+				<artifactId>zkclient</artifactId>
+				<version>0.9</version>
 			</dependency>
     	</dependencies>
     </dependencyManagement>
