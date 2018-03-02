@@ -1,7 +1,8 @@
 package com.hwz.platform.springmvc;
 
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializerProvider;
