@@ -45,7 +45,8 @@ prepare() {
   	fi
   	  	
 	rm -rf  "$JETTY_WEBAPPS/root.war $JETTY_WEBAPPS/root/"
-  	cp $DEPLOY_HOME/*.war  $JETTY_WEBAPPS/root.war
+  	# cp $DEPLOY_HOME/*.war  $JETTY_WEBAPPS/root.war
+  	cp $DEPLOY_HOME/*.war  $JETTY_WEBAPPS/user.war
   	echo -e "has copyed root.war"
 }
 

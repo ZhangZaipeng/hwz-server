@@ -29,7 +29,7 @@
         <java_source_version>1.7</java_source_version>
         <java_target_version>1.7</java_target_version>
         <file_encoding>UTF-8</file_encoding>
-        <spring.version>3.1.2.RELEASE</spring.version>
+        <spring.version>4.3.2.RELEASE</spring.version>
     </properties>
     
     <!-- maven plug manager -->
@@ -304,7 +304,19 @@
 				<artifactId>freemarker</artifactId>
 				<version>2.3.19</version>
 			</dependency>
-			
+			<!-- mongodb -->
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongo-java-driver</artifactId>
+				<version>3.5.0</version>
+			</dependency>
+
+			<!-- spring  mongodb -->
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-mongodb</artifactId>
+				<version>1.10.9.RELEASE</version>
+			</dependency>
     	</dependencies>
     </dependencyManagement>
     
