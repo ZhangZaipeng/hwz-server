@@ -3,6 +3,7 @@ package com.hwz.api.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import com.hwz.api.service.TestService;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,5 +34,10 @@ public class TestController {
         String res = testService.testService("haha");
 
         return new ModelAndView(new StringView(res));
+    }
+
+    public static void main(String[] args) {
+
+
     }
 }
